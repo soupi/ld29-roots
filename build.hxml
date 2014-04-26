@@ -1,0 +1,5 @@
+-main Main
+-neko Main.n
+
+-lib openfl
+-lib flixel
