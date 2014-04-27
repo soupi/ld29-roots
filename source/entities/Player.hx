@@ -11,7 +11,7 @@ import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
-	static inline var speed = 40;
+	static inline var speed = 55;
 	static inline var dragSpeed = 200;
 	public function new(x : Float, y : Float)
 	{

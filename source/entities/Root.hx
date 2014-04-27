@@ -17,7 +17,7 @@ class Root extends FlxSprite
 	{
 		super(x, y);
 
-		this.makeGraphic(Config.DIRT_SIZE_W, Config.DIRT_SIZE_H, FlxColor.IVORY);
+		this.makeGraphic(Config.DIRT_SIZE_W, Config.DIRT_SIZE_H, FlxColor.BLACK, true);
 	}
 	public override function update()
 	{
