@@ -22,6 +22,7 @@ class PlayState extends FlxState
 	var drops : FlxTypedGroup<entities.Drop>;
 	var roots : FlxTypedGroup<entities.Root>;
 	var player : entities.Player;
+	var grass : FlxSprite;
 
 	var waterBar : entities.WaterBar;
 	var hudCam : FlxCamera;
@@ -30,10 +31,8 @@ class PlayState extends FlxState
 
 	var start_x : Int;
 
-
 	var root_dirt_timer : Float = 0.7;
 	var root_drop_timer : Float = 0.2;
-	var player_dirt_timer : Float = 0.1;
 
 	public function new(?x = 400)
 	{
@@ -65,6 +64,10 @@ class PlayState extends FlxState
 		this.add(dirt);
 		this.add(roots);
 		this.add(drops);
+		grass = new FlxSprite(0, 200-Config.DIRT_SIZE_H);
+		grass.solid = grass.immovable = true;
+		grass.makeGraphic(FlxG.width, Config.DIRT_SIZE_H,FlxColor.FOREST_GREEN, true);
+		this.add(grass);
 
 	}
 	private function initDirt()
@@ -147,42 +150,30 @@ class PlayState extends FlxState
 	function updateTimers()
 	{
 
-		root_dirt_timer -= FlxG.elapsed;
 		root_drop_timer -= FlxG.elapsed;
-		player_dirt_timer -= FlxG.elapsed;
 
-		if (root_dirt_timer < 0)
-		{
-			FlxG.overlap(roots, dirt, collRootDirt);
-			root_dirt_timer = 0.1;
-		}
 		if (root_drop_timer < 0)
 		{
 			FlxG.overlap(roots, drops, collRootDrop);
 			root_drop_timer = 0.5;
 		}
-		if (player_dirt_timer < 0)
-		{
-			FlxG.overlap(player, dirt, collPlayerDirt);
-			player_dirt_timer = 0.1;
-		}
+		FlxG.collide(grass, player);
+		FlxG.overlap(player, dirt, collPlayerDirt);
 	}
 
 	function collPlayerDirt(playerRef : entities.Player, d : entities.Dirt)
 	{
-		if (!waterBar.addWater(-5))
+		if (!waterBar.addWater(-20))
 		{
 			playerRef.x = playerRef.last.x;
 			playerRef.y = playerRef.last.y;
 		}
-		else roots.add(new entities.Root(d.x, d.y));
-
-
-	}
-	function collRootDirt(root : entities.Root, d : entities.Dirt)
-	{
-		dirt.remove(d);
-		d.destroy();
+		else
+		{
+			roots.add(new entities.Root(d.x, d.y));
+			dirt.remove(d);
+			d.destroy();
+		}
 
 	}
 	function collRootDrop(root : entities.Root, drop : entities.Drop)

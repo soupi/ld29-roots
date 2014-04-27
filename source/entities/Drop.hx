@@ -13,7 +13,7 @@ import flixel.util.FlxColor;
 
 class Drop extends FlxSprite
 {
-	var water : Float = 50;
+	var water : Float = 35;
 	public function new(x : Float, y : Float)
 	{
 		super(x, y);
@@ -31,7 +31,7 @@ class Drop extends FlxSprite
 	public function getWater() : Float
 	{
 		water -= 2;
-		enlarge(water/100);
+		enlarge(water/35);
 		if (water < 0)
 			return -1;
 		return 2;
