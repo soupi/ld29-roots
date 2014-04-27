@@ -27,8 +27,6 @@ class Splash extends FlxState
 
 	override public function create() : Void
 	{
-		//textGui = new FlxText(FlxG.width / 2 - 200 / 2, FlxG.height / 2 - 20, 200, "", 20);
-		
 		var sky = new FlxSprite();	
 		sky.loadGraphic("assets/images/sky.png", false, FlxG.width, FlxG.height);
 		var grass = new FlxSprite();	
@@ -47,26 +45,26 @@ class Splash extends FlxState
 		comment.color = 0xFF000000;
 
 
-		FlxSpriteUtil.fadeOut(logo, 0.1, true, function (e) {
-			FlxSpriteUtil.fadeIn(logo, 3, true, function (e) {
-				FlxSpriteUtil.fadeIn(comment, 1);
-				this.add(comment);
-			});
-		});
 
 		this.add(sky);
 		this.add(grass);
 		this.add(cloud1);
 		this.add(cloud2);
 		this.add(cloud3);
-		this.add(logo);
 
 		cloud1.velocity.x = 100;
 		cloud2.velocity.x = 80;
 		cloud3.velocity.x = 85;
 
 
-		FlxG.camera.fade(0xFFFFFF, 1.5, true, afterFadeIn);
+		FlxG.camera.fade(0xFFFFFF, 1.5, true,
+			function() {
+				FlxSpriteUtil.fadeIn(logo, 2.5, true, function (e) {
+					FlxSpriteUtil.fadeIn(comment, 1);
+					this.add(comment);
+				});
+				this.add(logo);
+			});
 		super.create();
 	}
 	
@@ -84,8 +82,6 @@ class Splash extends FlxState
 	 */
 	override public function update():Void
 	{
-		updateTimer();
-		updateFadeOutTimer();
 		updateClouds();
 
 		if (FlxG.keys.anyPressed(["SPACE", "ENTER"]))
@@ -110,23 +106,5 @@ class Splash extends FlxState
 			cloud2.x = -600;
 		if (cloud3.x > 500)
 			cloud3.x = -800;
-	}
-
-	function updateTimer() : Void
-	{
-	}
-	/**
-	 * updating the text
-	 */
-	function afterFadeIn() : Void
-	{
-	}
-	function afterFade() : Void
-	{
-	}
-	function updateFadeOutTimer() : Void
-	{
-		//FlxG.switchState(new PlayState());
-
 	}
 }
