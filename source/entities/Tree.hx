@@ -18,7 +18,7 @@ class Tree extends FlxSprite
 	var ws : Int;
 	var hs : Int;
 	var c : Int;
-	var s : Float = 15;
+	var s : Float = 5;
 
 	public function new(x : Float, y : Float, w, h, c)
 	{
@@ -37,7 +37,7 @@ class Tree extends FlxSprite
 		s -= FlxG.elapsed;
 		if (s <= 0)
 		{
-			s = 15;
+			s = 5;
 			ws += w;
 			hs += h;
 			this.makeGraphic(ws, hs, c);

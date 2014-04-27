@@ -23,6 +23,7 @@ class PlayState extends FlxState
 	var roots : FlxTypedGroup<entities.Root>;
 	var player : entities.Player;
 	var grass : FlxSprite;
+	var skyline : FlxSprite;
 	var tree : FlxTypedGroup<FlxSprite>;
 
 	var waterBar : entities.WaterBar;
@@ -42,6 +43,8 @@ class PlayState extends FlxState
 
 	var firstBoySeed = true;
 	var firstGroundSeed = true;
+
+	var isEnd = false;
 
 	public function new(?x = 400)
 	{
@@ -83,6 +86,10 @@ class PlayState extends FlxState
 		grass.makeGraphic(Std.int(FlxG.width/FlxG.camera.zoom), Config.DIRT_SIZE_H,FlxColor.FOREST_GREEN, true);
 		this.add(grass);
 
+		skyline = new FlxSprite(0, Std.int(-Config.DIRT_SIZE_H));
+		skyline.solid = skyline.immovable = true;
+		skyline.makeGraphic(Std.int(FlxG.width/FlxG.camera.zoom), Config.DIRT_SIZE_H,FlxColor.BLUE, true);
+		this.add(skyline);
 	}
 
 	function init(x)
@@ -153,7 +160,7 @@ class PlayState extends FlxState
 		player = new entities.Player(start_x+8, 200/FlxG.camera.zoom+3);
 		FlxSpriteUtil.fadeIn(player, 0.5, true, function(e) {
 			
-			waterBar = new entities.WaterBar(onEmptyBar, 10,10);
+			waterBar = new entities.WaterBar(onEmptyBar, function(){}, 10,10);
 			this.add(waterBar);
 
 			FlxG.camera.zoom = 1;
@@ -182,6 +189,12 @@ class PlayState extends FlxState
 	private function onEmptyBar()
 	{
 		FlxG.camera.fade(0x000000, 3, false, function() { FlxG.switchState(new states.GameOver("GAME OVER")); });
+
+	}
+	private function onFullBar(e)
+	{
+		FlxG.camera.fade(0x000000, 4, false, function() {
+			FlxG.switchState(new states.GameOver("GAME OVER :)")); });
 
 	}
 
@@ -228,10 +241,33 @@ class PlayState extends FlxState
 
 		if (root_drop_timer < 0)
 		{
+			FlxG.overlap(tree, skyline, ending);
 			FlxG.overlap(roots, drops, collRootDrop);
 			root_drop_timer = 0.5;
 		}
 		FlxG.collide(grass, player);
+	}
+	function ending(a : FlxSprite, b : FlxSprite)
+	{
+		if (isEnd) return;
+		isEnd = true;
+		var posx = a.x;
+		var width = a.width - 80;
+		var height = a.height - 80;
+		FlxG.camera.follow(a);
+		for (i in 0...15)
+		{
+			var r1 =Math.random();
+			var r2 =Math.random();
+			var x = Std.int(r1 * width + posx);
+			var y = Std.int(r2 * height);
+			var d = new FlxSprite(x, y);
+			d.makeGraphic(Std.int(Config.DROP_SIZE_W/2), Std.int(Config.DROP_SIZE_H/2), FlxColor.RED);
+			this.add(d);
+			FlxSpriteUtil.fadeIn(d, 3, true, onFullBar);
+
+		}
+
 	}
 
 	function collPlayerDirt(playerRef : entities.Player, d : entities.Dirt)
