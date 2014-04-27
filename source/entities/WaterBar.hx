@@ -17,7 +17,7 @@ class WaterBar extends FlxBar
 	var water : Float = Config.BAR_SIZE_W;
 	public function	new(onEmpty : Void -> Void, onFull : Void -> Void, x : Float, y : Float, ?parentRef : Dynamic, ?variable : String, ?min : Float, ?max : Float, ?border : Bool)
 	{
-		super(x, y, null, Std.int((FlxG.width-20)/2),  Config.BAR_SIZE_H, parentRef, variable, 0, 300, border);
+		super(x, y, 1, Std.int((FlxG.width-20)/2),  Config.BAR_SIZE_H, parentRef, variable, 0, 300, border);
 		this.createFilledBar(0x00000000, FlxColor.BLUE, false);
 		this.currentValue = water;
 		this.scrollFactor = new FlxPoint(0,0);

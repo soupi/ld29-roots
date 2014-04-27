@@ -28,6 +28,10 @@ var test = false;
 	var grass : FlxSprite;
 	var skyline : FlxSprite;
 	var tree : FlxTypedGroup<FlxSprite>;
+	var bounds : FlxTypedGroup<FlxSprite>;
+	var bound1 : FlxSprite;
+	var bound2 : FlxSprite;
+	var bound3 : FlxSprite;
 
 	var waterBar : entities.WaterBar;
 	var hudCam : FlxCamera;
@@ -64,6 +68,7 @@ var test = false;
 		drops = new FlxTypedGroup();
 		roots = new FlxTypedGroup();
 		tree = new FlxTypedGroup();
+		bounds = new FlxTypedGroup();
 
 		FlxG.camera.zoom = 0.5;
 		FlxG.camera.setSize(Std.int(FlxG.width / 0.5), Std.int(FlxG.height / 0.5));
@@ -80,6 +85,8 @@ var test = false;
 				
 		initDirt();
 		initDrops();
+		initBounds();
+		this.add(bounds);
 
 		this.add(dirt);
 		this.add(roots);
@@ -95,11 +102,29 @@ var test = false;
 		skyline.makeGraphic(Std.int(FlxG.width/z), Config.DIRT_SIZE_H,FlxColor.BLUE, true);
 		this.add(skyline);
 	}
+	function initBounds()
+	{
+		var z = 0.5;
+		bound1 = new FlxSprite(-10, 0);
+		bound1.solid = bound1.immovable = true;
+		bound1.makeGraphic(10, Std.int(FlxG.height/z),FlxColor.TRANSPARENT);
+		bounds.add(bound1);
+
+		bound2 = new FlxSprite(0, FlxG.height/z);
+		bound2.solid = bound2.immovable = true;
+		bound2.makeGraphic(Std.int(FlxG.width/z), 10,FlxColor.TRANSPARENT);
+		bounds.add(bound2);
+
+		bound3 = new FlxSprite(Std.int(FlxG.width/z), 0);
+		bound3.solid = bound3.immovable = true;
+		bound3.makeGraphic(10, Std.int(FlxG.height/z),FlxColor.TRANSPARENT);
+		bounds.add(bound1);
+	}
 
 	function init(x)
 	{
 		boy = new FlxSprite(-200, 210);
-		boy.loadGraphic("assets/images/man.png", 200, 200, true);
+		boy.loadGraphic("assets/images/man.png", true, 200, 200, true);
 		boy.animation.add("walk", [0,1], 6);
 		boy.animation.play("walk");
 		boy.velocity.x = 200;
@@ -132,14 +157,14 @@ var test = false;
 		var z = 0.5;
 		var w : Int = Std.int(FlxG.width/z / Config.DROP_SIZE_W);
 		var h : Int = Std.int((FlxG.height/z - 200/z) / Config.DROP_SIZE_H);
-		var hh = Std.int(h/6);
+		var hh = Std.int(h/5);
 		var hw = Std.int(w/4);
 
 		// drops random
 		for (i in 0...hh)
 		{
-			var hhw = hw + Std.int(i/5);
-			for (j in 0...hw)
+			var hhw = hw + Std.int(5 - i/5);
+			for (j in 0...hhw)
 			{
 				var d = new entities.Drop(Math.random() * w * Config.DROP_SIZE_W,
 						200/z + (Config.DROP_SIZE_H * Math.random() * h ));
@@ -254,6 +279,9 @@ var test = false;
 			root_drop_timer = 0.5;
 		}
 		FlxG.collide(grass, player);
+		FlxG.collide(bound1, player);
+		FlxG.collide(bound2, player);
+		FlxG.collide(bound3, player);
 	}
 	function ending(a : FlxSprite, b : FlxSprite)
 	{
