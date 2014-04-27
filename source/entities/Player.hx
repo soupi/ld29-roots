@@ -11,7 +11,7 @@ import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
-	static inline var speed = 55;
+	public static inline var speed = 55;
 	static inline var dragSpeed = 200;
 	public function new(x : Float, y : Float)
 	{
@@ -33,17 +33,11 @@ class Player extends FlxSprite
 	}
 	public override function update()
 	{
-		handleInput();
 //		setAnimation();
 		super.update();
 	}
-	function handleInput()
+	public function handleInput(vel : FlxPoint)
 	{
-		var vel = new FlxPoint(velocity.x, velocity.y);
-		if (FlxG.keys.anyPressed(["A", "LEFT"])) vel.x = -speed;
-		if (FlxG.keys.anyPressed(["D", "RIGHT"])) vel.x = speed;
-		if (FlxG.keys.anyPressed(["W", "UP"])) vel.y = -speed;
-		if (FlxG.keys.anyPressed(["s", "DOWN"])) vel.y = speed;
 
 		if (!(vel.x != 0 || vel.y != 0))
 		{

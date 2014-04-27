@@ -18,6 +18,9 @@ import flixel.util.FlxPoint;
 
 class PlayState extends FlxState
 {
+var test = false;
+
+
 	var dirt : FlxTypedGroup<entities.Dirt>;
 	var drops : FlxTypedGroup<entities.Drop>;
 	var roots : FlxTypedGroup<entities.Root>;
@@ -81,14 +84,15 @@ class PlayState extends FlxState
 		this.add(dirt);
 		this.add(roots);
 		this.add(drops);
-		grass = new FlxSprite(0, Std.int(200/FlxG.camera.zoom)-Config.DIRT_SIZE_H);
+		var z = 0.5;
+		grass = new FlxSprite(0, Std.int(200/z)-Config.DIRT_SIZE_H);
 		grass.solid = grass.immovable = true;
-		grass.makeGraphic(Std.int(FlxG.width/FlxG.camera.zoom), Config.DIRT_SIZE_H,FlxColor.FOREST_GREEN, true);
+		grass.makeGraphic(Std.int(FlxG.width/z), Config.DIRT_SIZE_H,FlxColor.FOREST_GREEN, true);
 		this.add(grass);
 
 		skyline = new FlxSprite(0, Std.int(-Config.DIRT_SIZE_H));
 		skyline.solid = skyline.immovable = true;
-		skyline.makeGraphic(Std.int(FlxG.width/FlxG.camera.zoom), Config.DIRT_SIZE_H,FlxColor.BLUE, true);
+		skyline.makeGraphic(Std.int(FlxG.width/z), Config.DIRT_SIZE_H,FlxColor.BLUE, true);
 		this.add(skyline);
 	}
 
@@ -108,7 +112,7 @@ class PlayState extends FlxState
 
 	private function initDirt()
 	{
-		var z = FlxG.camera.zoom;
+		var z = 0.5;
 		var w : Int = Std.int((FlxG.width/z) / Config.DIRT_SIZE_W) + 1;
 		var h : Int = Std.int(((FlxG.height/z) - (200/z)) / Config.DIRT_SIZE_H) + 1;
 
@@ -125,10 +129,10 @@ class PlayState extends FlxState
 	
 	private function initDrops()
 	{
-		var z = FlxG.camera.zoom;
+		var z = 0.5;
 		var w : Int = Std.int(FlxG.width/z / Config.DROP_SIZE_W);
 		var h : Int = Std.int((FlxG.height/z - 200/z) / Config.DROP_SIZE_H);
-		var hh = Std.int(h/8);
+		var hh = Std.int(h/6);
 		var hw = Std.int(w/4);
 
 		// drops random
@@ -148,7 +152,8 @@ class PlayState extends FlxState
 
 	private function initRoot(x : Int)
 	{
-		var root1 = new entities.Root(x, 200/FlxG.camera.zoom);
+		var z = 0.5;
+		var root1 = new entities.Root(x, 200/z);
 		roots.add(root1);
 
 		FlxSpriteUtil.fadeIn(root1, 0.5, true, hatch);
@@ -157,7 +162,8 @@ class PlayState extends FlxState
 
 	private function hatch(e)
 	{
-		player = new entities.Player(start_x+8, 200/FlxG.camera.zoom+3);
+		var z = 0.5;
+		player = new entities.Player(start_x+8, 200/z+3);
 		FlxSpriteUtil.fadeIn(player, 0.5, true, function(e) {
 			
 			waterBar = new entities.WaterBar(onEmptyBar, function(){}, 10,10);
@@ -167,6 +173,7 @@ class PlayState extends FlxState
 			FlxG.camera.setSize(Std.int(FlxG.width), Std.int(FlxG.height));
 			FlxG.camera.follow(player, FlxCamera.STYLE_TOPDOWN, new FlxPoint(0,0), 1);
 			FlxG.camera.update();
+			FlxG.worldBounds.set(0, -Config.DIRT_SIZE_H, FlxG.width*2, FlxG.height*2 + Config.DIRT_SIZE_H);
 
 			initTree();
 
@@ -236,6 +243,7 @@ class PlayState extends FlxState
 	{
 		if (!isFadeDone) return;
 		FlxG.overlap(player, dirt, collPlayerDirt);
+		handleInput();
 
 		root_drop_timer -= FlxG.elapsed;
 
@@ -282,7 +290,6 @@ class PlayState extends FlxState
 		{
 			roots.add(new entities.Root(d.x, d.y));
 			dirt.remove(d);
-			d.destroy();
 		}
 
 	}
@@ -297,4 +304,14 @@ class PlayState extends FlxState
 		else waterBar.addWater(wat);
 
 	}
+    function handleInput()
+    {
+        var vel = new FlxPoint(player.velocity.x, player.velocity.y);
+        if (FlxG.keys.anyPressed(["A", "LEFT"])) vel.x = -entities.Player.speed;
+        if (FlxG.keys.anyPressed(["D", "RIGHT"])) vel.x = entities.Player.speed;
+        if (FlxG.keys.anyPressed(["W", "UP"])) vel.y = -entities.Player.speed;
+        if (FlxG.keys.anyPressed(["s", "DOWN"])) vel.y = entities.Player.speed;
+		player.handleInput(vel);
+	}
+															
 }
