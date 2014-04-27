@@ -38,9 +38,6 @@ class WaterBar extends FlxBar
 	{
 		water -= FlxG.elapsed;
 
-		if (water < 0)
-			water = 0;
-
 		currentValue = water;
 	}
 	public function addWater(w : Float) : Bool

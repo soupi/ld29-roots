@@ -21,12 +21,13 @@ class GameOver extends FlxState
 
 	var text : String = "Game Over";
 	var textGui : FlxText;
+	public function new(t : String){ text = t; super();}
 	override public function create():Void
 	{
 		super.create();
 
 		FlxG.camera.fade(0x000000, 1, true, function() {
-		        textGui = new FlxText(FlxG.width / 2 - 200 / 2, FlxG.height / 2 - 20, 400, "GAME OVER", 40);
+		        textGui = new FlxText(FlxG.width / 2 - 200 / 2, FlxG.height / 2 - 20, 400, text, 40);
 			    textGui.alignment = "center";
 
 			    add(textGui);

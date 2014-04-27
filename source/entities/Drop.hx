@@ -26,19 +26,17 @@ class Drop extends FlxSprite
 		this.animation.add("30", [1]);
 		this.animation.add("20", [2]);
 		this.animation.add("10", [3]);
+		this.animation.add("0", [3]);
+		this.animation.play("40");
 	}
 	public override function update()
 	{
 		super.update();
 	}
-	public function enlarge(ratio : Float)
-	{
-	//	this.scale = new FlxPoint(ratio, ratio);
-	}
 	public function getWater() : Float
 	{
 		water -= 2;
-		if (water % 10 == 0) this.animation.play("" + water);  //enlarge(water/initS);
+		if (water % 10 == 0) this.animation.play("" + water);
 		if (water < 0)
 			return -1;
 		return 2;

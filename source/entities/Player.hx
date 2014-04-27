@@ -17,7 +17,7 @@ class Player extends FlxSprite
 	{
 		super(x,y);
 
-		this.loadGraphic("assets/images/humi25.png", true, Config.DROP_SIZE_W, Config.DROP_SIZE_H);
+		this.loadGraphic("assets/images/humi25.png", true, 25, 25);
 
 		/*
 		this.animation.add("idle", [0]);

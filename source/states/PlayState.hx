@@ -23,6 +23,7 @@ class PlayState extends FlxState
 	var roots : FlxTypedGroup<entities.Root>;
 	var player : entities.Player;
 	var grass : FlxSprite;
+	var tree : FlxTypedGroup<FlxSprite>;
 
 	var waterBar : entities.WaterBar;
 	var hudCam : FlxCamera;
@@ -56,6 +57,7 @@ class PlayState extends FlxState
 		dirt = new FlxTypedGroup();
 		drops = new FlxTypedGroup();
 		roots = new FlxTypedGroup();
+		tree = new FlxTypedGroup();
 
 		FlxG.camera.zoom = 0.5;
 		FlxG.camera.setSize(Std.int(FlxG.width / 0.5), Std.int(FlxG.height / 0.5));
@@ -159,14 +161,27 @@ class PlayState extends FlxState
 			FlxG.camera.follow(player, FlxCamera.STYLE_TOPDOWN, new FlxPoint(0,0), 1);
 			FlxG.camera.update();
 
+			initTree();
+
 			isFadeDone = true;
 		});
 		this.add(player);
 	}
 
+	function initTree()
+	{
+		var base = new entities.Tree(start_x+14, 350, 10, 42, FlxColor.BROWN);
+		var head = new entities.Tree(start_x, 310, 42, 42, FlxColor.GREEN);
+		tree.add(base);
+		tree.add(head);
+		add(tree);
+
+
+	}
+
 	private function onEmptyBar()
 	{
-		FlxG.camera.fade(0x000000, 3, false, function() { FlxG.switchState(new states.GameOver()); });
+		FlxG.camera.fade(0x000000, 3, false, function() { FlxG.switchState(new states.GameOver("GAME OVER")); });
 
 	}
 
@@ -208,7 +223,6 @@ class PlayState extends FlxState
 	{
 		if (!isFadeDone) return;
 		FlxG.overlap(player, dirt, collPlayerDirt);
-		FlxG.collide(dirt, player);
 
 		root_drop_timer -= FlxG.elapsed;
 
