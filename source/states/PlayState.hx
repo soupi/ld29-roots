@@ -120,7 +120,7 @@ class PlayState extends FlxState
 		player = new entities.Player(start_x, 200);
 		FlxSpriteUtil.fadeIn(player, 0.5, true, function(e) {
 			
-			waterBar = new entities.WaterBar(10,10);
+			waterBar = new entities.WaterBar(onEmptyBar, 10,10);
 			this.add(waterBar);
 
 			FlxG.camera.zoom = 2;
@@ -131,6 +131,12 @@ class PlayState extends FlxState
 			isFadeDone = true;
 		});
 		this.add(player);
+	}
+
+	private function onEmptyBar()
+	{
+		FlxG.camera.fade(0x000000, 3, false, function() { FlxG.switchState(new states.GameOver()); });
+
 	}
 
 	override public function destroy():Void
