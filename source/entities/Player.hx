@@ -17,8 +17,7 @@ class Player extends FlxSprite
 	{
 		super(x,y);
 
-		//this.loadGraphic("assets/images/animals.png", true, SPRITESIZE, SPRITESIZE);
-		this.makeGraphic(Config.DROP_SIZE_W, Config.DROP_SIZE_H, FlxColor.INDIGO);
+		this.loadGraphic("assets/images/humi25.png", true, Config.DROP_SIZE_W, Config.DROP_SIZE_H);
 
 		/*
 		this.animation.add("idle", [0]);

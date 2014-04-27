@@ -10,15 +10,22 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import flixel.util.FlxColor;
+import flixel.util.FlxPoint;
+
 
 class Drop extends FlxSprite
 {
-	var water : Float = 35;
+	static var initS = 40;
+	var water : Int = initS;
 	public function new(x : Float, y : Float)
 	{
 		super(x, y);
 
-		this.makeGraphic(Config.DROP_SIZE_W, Config.DROP_SIZE_H, FlxColor.BLUE, true);
+		this.loadGraphic("assets/images/drops25.png", true, Config.DROP_SIZE_W, Config.DROP_SIZE_H);
+		this.animation.add("40", [0]);
+		this.animation.add("30", [1]);
+		this.animation.add("20", [2]);
+		this.animation.add("10", [3]);
 	}
 	public override function update()
 	{
@@ -26,12 +33,12 @@ class Drop extends FlxSprite
 	}
 	public function enlarge(ratio : Float)
 	{
-		this.makeGraphic(Std.int(Config.DROP_SIZE_W*ratio), Std.int(Config.DROP_SIZE_H*ratio), FlxColor.BLUE);
+	//	this.scale = new FlxPoint(ratio, ratio);
 	}
 	public function getWater() : Float
 	{
 		water -= 2;
-		enlarge(water/35);
+		if (water % 10 == 0) this.animation.play("" + water);  //enlarge(water/initS);
 		if (water < 0)
 			return -1;
 		return 2;

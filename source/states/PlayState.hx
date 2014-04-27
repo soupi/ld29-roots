@@ -47,6 +47,8 @@ class PlayState extends FlxState
 		drops = new FlxTypedGroup();
 		roots = new FlxTypedGroup();
 
+		FlxG.camera.zoom = 0.5;
+		FlxG.camera.setSize(Std.int(FlxG.width / 0.5), Std.int(FlxG.height / 0.5));
 
 		FlxG.camera.fade(0x000000, 2, true, function() { initRoot(start_x); });
 
@@ -55,7 +57,7 @@ class PlayState extends FlxState
 	private function initMap()
 	{
 		var sky = new FlxSprite();
-		sky.loadGraphic("assets/images/sky.png", false, FlxG.width, FlxG.height);
+		sky.loadGraphic("assets/images/sky1600.png", false);//, FlxG.width/FlxG.camera.zoom, FlxG.height/FlxG.camera.zoom);
 		this.add(sky);
 				
 		initDirt();
@@ -64,22 +66,24 @@ class PlayState extends FlxState
 		this.add(dirt);
 		this.add(roots);
 		this.add(drops);
-		grass = new FlxSprite(0, 200-Config.DIRT_SIZE_H);
+		grass = new FlxSprite(0, Std.int(200/FlxG.camera.zoom)-Config.DIRT_SIZE_H);
 		grass.solid = grass.immovable = true;
-		grass.makeGraphic(FlxG.width, Config.DIRT_SIZE_H,FlxColor.FOREST_GREEN, true);
+		grass.makeGraphic(Std.int(FlxG.width/FlxG.camera.zoom), Config.DIRT_SIZE_H,FlxColor.FOREST_GREEN, true);
 		this.add(grass);
 
 	}
 	private function initDirt()
 	{
-		var w : Int = Std.int(FlxG.width / Config.DIRT_SIZE_W);
-		var h : Int = Std.int((FlxG.height - 200) / Config.DIRT_SIZE_H);
+		var z = FlxG.camera.zoom;
+		var w : Int = Std.int((FlxG.width/z) / Config.DIRT_SIZE_W);
+		var h : Int = Std.int(((FlxG.height/z) - (200/z)) / Config.DIRT_SIZE_H);
+
 		// 200 -> 600 of dirt
 		for (y in 0...h)
 		{
 			for (x in 0...w)
 			{
-				var d = new entities.Dirt(x * Config.DIRT_SIZE_W, 200 + (Config.DIRT_SIZE_H * y));
+				var d = new entities.Dirt(x * Config.DIRT_SIZE_W, 200/z + (Config.DIRT_SIZE_H * y));
 				dirt.add(d);
 			}
 		}
@@ -87,8 +91,9 @@ class PlayState extends FlxState
 	
 	private function initDrops()
 	{
-		var w : Int = Std.int(FlxG.width / Config.DROP_SIZE_W);
-		var h : Int = Std.int((FlxG.height - 200) / Config.DROP_SIZE_H);
+		var z = FlxG.camera.zoom;
+		var w : Int = Std.int(FlxG.width/z / Config.DROP_SIZE_W);
+		var h : Int = Std.int((FlxG.height/z - 200/z) / Config.DROP_SIZE_H);
 		var hh = Std.int(h/8);
 		var hw = Std.int(w/4);
 
@@ -98,7 +103,7 @@ class PlayState extends FlxState
 			for (j in 0...hw)
 			{
 				var d = new entities.Drop(Math.random() * w * Config.DROP_SIZE_W,
-						200 + (Config.DROP_SIZE_H * Math.random() * h ));
+						200/z + (Config.DROP_SIZE_H * Math.random() * h ));
 
 				drops.add(d);
 			}
@@ -108,7 +113,7 @@ class PlayState extends FlxState
 
 	private function initRoot(x : Int)
 	{
-		var root1 = new entities.Root(x, 200);
+		var root1 = new entities.Root(x, 200/FlxG.camera.zoom);
 		roots.add(root1);
 
 		FlxSpriteUtil.fadeIn(root1, 0.5, true, hatch);
@@ -117,14 +122,14 @@ class PlayState extends FlxState
 
 	private function hatch(e)
 	{
-		player = new entities.Player(start_x, 200);
+		player = new entities.Player(start_x, 200/FlxG.camera.zoom);
 		FlxSpriteUtil.fadeIn(player, 0.5, true, function(e) {
 			
 			waterBar = new entities.WaterBar(onEmptyBar, 10,10);
 			this.add(waterBar);
 
-			FlxG.camera.zoom = 2;
-			FlxG.camera.setSize(Std.int(FlxG.width / 2), Std.int(FlxG.height / 2));
+			FlxG.camera.zoom = 1;
+			FlxG.camera.setSize(Std.int(FlxG.width), Std.int(FlxG.height));
 			FlxG.camera.follow(player, FlxCamera.STYLE_TOPDOWN, new FlxPoint(0,0), 1);
 			FlxG.camera.update();
 
@@ -155,6 +160,7 @@ class PlayState extends FlxState
 	}
 	function updateTimers()
 	{
+		FlxG.overlap(player, dirt, collPlayerDirt);
 
 		root_drop_timer -= FlxG.elapsed;
 
@@ -164,12 +170,12 @@ class PlayState extends FlxState
 			root_drop_timer = 0.5;
 		}
 		FlxG.collide(grass, player);
-		FlxG.overlap(player, dirt, collPlayerDirt);
 	}
 
 	function collPlayerDirt(playerRef : entities.Player, d : entities.Dirt)
 	{
-		if (!waterBar.addWater(-20))
+		var res = waterBar.addWater(-20);
+		if (!res)
 		{
 			playerRef.x = playerRef.last.x;
 			playerRef.y = playerRef.last.y;
