@@ -35,6 +35,8 @@ var test = false;
 
 	var waterBar : entities.WaterBar;
 	var hudCam : FlxCamera;
+	var hudCam2 : FlxCamera;
+	
 
 	var isFadeDone = false;
 
@@ -101,6 +103,8 @@ var test = false;
 		skyline.solid = skyline.immovable = true;
 		skyline.makeGraphic(Std.int(FlxG.width/z), Config.DIRT_SIZE_H,FlxColor.BLUE, true);
 		this.add(skyline);
+
+		this.add(tree);
 	}
 	function initBounds()
 	{
@@ -191,14 +195,19 @@ var test = false;
 		player = new entities.Player(start_x+8, 200/z+3);
 		FlxSpriteUtil.fadeIn(player, 0.5, true, function(e) {
 			
-			waterBar = new entities.WaterBar(onEmptyBar, function(){}, 10,10);
+			waterBar = new entities.WaterBar(onEmptyBar, function(){}, 0,-300);
 			this.add(waterBar);
+		hudCam2 = new FlxCamera(10, 10, 300, Config.BAR_SIZE_H);
+		hudCam2.alpha = 0.7;
+		hudCam2.target = waterBar;
+		FlxG.cameras.add(hudCam2);
+
 
 			FlxG.camera.zoom = 1;
 			FlxG.camera.setSize(Std.int(FlxG.width), Std.int(FlxG.height));
 			FlxG.camera.follow(player, FlxCamera.STYLE_TOPDOWN, new FlxPoint(0,0), 1);
 			FlxG.camera.update();
-			FlxG.worldBounds.set(0, -Config.DIRT_SIZE_H, FlxG.width*2, FlxG.height*2 + Config.DIRT_SIZE_H);
+			FlxG.worldBounds.set(-10, -Config.DIRT_SIZE_H, FlxG.width*2 + 20, FlxG.height*2 + Config.DIRT_SIZE_H + 10);
 
 			initTree();
 
@@ -213,8 +222,17 @@ var test = false;
 		var head = new entities.Tree(start_x, 310, 42, 42, FlxColor.GREEN);
 		tree.add(base);
 		tree.add(head);
-		add(tree);
 
+		var base2 = new entities.Tree(2000+14, 350, 10, 42, FlxColor.BROWN);
+		var head2 = new entities.Tree(2000, 310, 42, 42, FlxColor.GREEN);
+		this.add(base2);
+		this.add(head2);
+
+		hudCam = new FlxCamera(FlxG.width - 200, 0,	200, 200, 0.5);
+		hudCam.setSize(400, 400);
+	//	hudCam.target = head;
+		hudCam.focusOn(new FlxPoint(start_x+21, 200));
+		FlxG.cameras.add(hudCam);
 
 	}
 
@@ -226,7 +244,7 @@ var test = false;
 	private function onFullBar(e)
 	{
 		FlxG.camera.fade(0x000000, 4, false, function() {
-			FlxG.switchState(new states.GameOver("GAME OVER :)")); });
+			FlxG.switchState(new states.GameOver("END :)")); });
 
 	}
 
@@ -287,6 +305,10 @@ var test = false;
 	{
 		if (isEnd) return;
 		isEnd = true;
+		
+		FlxG.cameras.remove(hudCam);
+		FlxG.cameras.remove(hudCam2);
+
 		var posx = a.x;
 		var width = a.width - 80;
 		var height = a.height - 80;
@@ -308,7 +330,7 @@ var test = false;
 
 	function collPlayerDirt(playerRef : entities.Player, d : entities.Dirt)
 	{
-		var res = waterBar.addWater(-15);
+		var res = waterBar.addWater(-11);
 		if (!res)
 		{
 			playerRef.x = playerRef.last.x;

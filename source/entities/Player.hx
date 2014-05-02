@@ -28,6 +28,10 @@ class Player extends FlxSprite
 		this.animation.play("idle");
 		*/
 
+		width = 15;
+		height = 15;
+		offset = new FlxPoint(5,5);
+
 		this.drag.y = dragSpeed;
 		this.drag.x = dragSpeed;
 	}
